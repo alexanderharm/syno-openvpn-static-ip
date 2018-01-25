@@ -34,9 +34,9 @@ Enabled: yes
 
 # Schedule
 Run on the following days: Daily
-First run time:            (00:00 or the full hour after the replication jobs start)
+First run time:            00:00
 Frequency:                 Every 1 hour(s)
-Last run time:				23:45
+Last run time:			   23:00
 
 # Task Settings
 User-defined script: /volume1/sysadmin/syno-openvpn-static-ip/synoOpenVpnStaticIp.sh "<username1>:<ipsuffix1>" "<username2>:<ipsuffix2>"
@@ -44,18 +44,13 @@ User-defined script: /volume1/sysadmin/syno-openvpn-static-ip/synoOpenVpnStaticI
 
 ```
 # Type
-Scheduled task > User-defined script
+Triggered task > User-defined script
 
 # General
 Task:    SynoOpenVpnStaticIpBoot
 User:    root
+Event:   Boot
 Enabled: yes
-
-# Schedule
-Run on the following days: Daily
-First run time:            (00:00 or the full hour after the replication jobs start)
-Frequency:                 Every 1 hour(s)
-Last run time:				23:45
 
 # Task Settings
 User-defined script: /volume1/sysadmin/syno-openvpn-static-ip/synoOpenVpnStaticIp.sh "<username1>:<ipsuffix1>" "<username2>:<ipsuffix2>"
