@@ -76,7 +76,7 @@ for (( i=0; i<${#clients[@]}; i++ )); do
 
     username="$(echo ${clients[$i]} | cut -d ':' -f 1)"
     ipLocal="$(echo ${clients[$i]} | cut -d ':' -f 2)"
-    ipRemote="$((ipSuffixLocal-1))"
+    ipRemote="$((ipLocal-1))"
 
 	if [ $ipLocal -lt 100 ]; then
 		echo "IP \"${ipLocal}\" of user \"${username}\" too low."
