@@ -68,7 +68,7 @@ else
 fi
 
 # Get server IP range
-ipRange="$(grep -Eo 'server \d{1,3}\.\d{1,3}\.\d{1,3}\.' /var/packages/VPNCenter/etc/openvpn/openvpn.conf | grep -Eo '\d{1,3}\.\d{1,3}\.\d{1,3}\.')"
+ipRange="$(grep -Eo 'server [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.' /var/packages/VPNCenter/etc/openvpn/openvpn.conf | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.')"
 echo "IP range is: \"${ipRange}\""
 
 # Check client configs
