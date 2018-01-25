@@ -98,11 +98,13 @@ for (( i=0; i<${#clients[@]}; i++ )); do
 done
 
 # Prevent config from being overwritten
-if sed -i "s:overwriteccfiles=true:overwriteccfiles=false:g" /var/packages/VPNCenter/target/etc/openvpn/radiusplugin.cnf; then
+if grep -q 'overwriteccfiles=true' /var/packages/VPNCenter/target/etc/openvpn/radiusplugin.cnf; then
 	echo "Modified RADIUS config."
 else
 	echo "RADIUS config untouched."
 fi
+sed -i "s:overwriteccfiles=true:overwriteccfiles=false:g" /var/packages/VPNCenter/target/etc/openvpn/radiusplugin.cnf
+
 
 # Restart service if needed
 if [ $serviceRestart -gt 0 ]; then
