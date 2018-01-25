@@ -68,8 +68,10 @@ else
 fi
 
 # Get server IP range
-ipRange="$(grep -Eo 'server [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.' /var/packages/VPNCenter/etc/openvpn/openvpn.conf | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.')"
+ipRange="$(grep -Eo '^server [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.' /var/packages/VPNCenter/etc/openvpn/openvpn.conf | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.')"
 echo "IP range is: \"${ipRange}\""
+ipMin="$(grep -Eo '^max-clients [0-9]+' /var/packages/VPNCenter/etc/openvpn/openvpn.conf | grep -Eo '[0-9]+')"
+ipMin=$((2 + ipMin * 4))
 
 # Check client configs
 for (( i=0; i<${#clients[@]}; i++ )); do
@@ -78,8 +80,15 @@ for (( i=0; i<${#clients[@]}; i++ )); do
     ipLocal="$(echo ${clients[$i]} | cut -d ':' -f 2)"
     ipRemote="$((ipLocal-1))"
 
-	if [ $ipLocal -lt 100 ]; then
-		echo "IP \"${ipLocal}\" of user \"${username}\" too low."
+	# Check for even numbers
+	if [ $((ipLocal % 2)) -ne 0 ]; then
+		echo "IP \"${ipLocal}\" of user \"${username}\" not even. Skipping."
+		continue
+	fi
+
+	# Check for high enough IP
+	if [ $ipLocal -le $ipMin ]; then
+		echo "IP \"${ipLocal}\" of user \"${username}\" too low. Skipping."
 		continue
 	fi
 
