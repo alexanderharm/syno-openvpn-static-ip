@@ -74,8 +74,8 @@ echo "IP range is: \"${ipRange}\""
 # Check client configs
 for (( i=0; i<${#clients[@]}; i++ )); do
 
-    username="echo ${clients[$i]} | cut -d ':' -f 1"
-    ipLocal="echo ${clients[$i]} | cut -d ':' -f 2"
+    username="$(echo ${clients[$i]} | cut -d ':' -f 1)"
+    ipLocal="$(echo ${clients[$i]} | cut -d ':' -f 2)"
     ipRemote="$((ipSuffixLocal-1))"
 
 	if [ $ipLocal -lt 100 ]; then
