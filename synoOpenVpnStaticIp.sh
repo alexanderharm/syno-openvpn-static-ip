@@ -53,16 +53,23 @@ serviceRestart=0
 # Check if client config dir exists
 if [ ! -d "/var/packages/VPNCenter/etc/openvpn/ccd" ]; then
     mkdir -p /var/packages/VPNCenter/etc/openvpn/ccd
+	echo "Created client config dir."
+else
+	echo "Client config dir exists."
 fi
 
 # Add to config
 if ! grep -q "client-config-dir ccd" "/var/packages/VPNCenter/etc/openvpn/openvpn.conf"; then
 	echo "client-config-dir ccd" >> "/var/packages/VPNCenter/etc/openvpn/openvpn.conf"
+	echo "Config modified."
 	((serviceRestart++))
+else
+	echo "Config untouched."
 fi
 
 # Get server IP range
 ipRange="$(grep -Eo 'server \d{1,3}\.\d{1,3}\.\d{1,3}\.' | grep -Eo '\d{1,3}\.\d{1,3}\.\d{1,3}\.')"
+echo "IP range is: \"${ipRange}\""
 
 # Check client configs
 for (( i=0; i<${#clients[@]}; i++ )); do
@@ -71,22 +78,36 @@ for (( i=0; i<${#clients[@]}; i++ )); do
     ipLocal="echo ${clients[$i]} | cut -d ':' -f 2"
     ipRemote="$((ipSuffixLocal-1))"
 
+	if [ $ipLocal -lt 100 ]; then
+		echo "IP \"${ipLocal}\" of user \"${username}\" too low."
+		continue
+	fi
+
     # Check if config exists or verify
     if [ ! -f "/var/packages/VPNCenter/etc/openvpn/ccd/${username}" ]; then
 		echo "ifconfig-push ${ipRange}${ipLocal} ${ipRange}${ipRemote}" > "/var/packages/VPNCenter/etc/openvpn/ccd/${username}"
+		echo "Added IP \"${ipLocal}\" for user \"${username}\"."
 		((serviceRestart++))
     elif ! grep -Eq "ifconfig-push ${ipRange}${ipLocal} ${ipRange}${ipRemote}" "/var/packages/VPNCenter/etc/openvpn/ccd/${username}"; then
 		echo "ifconfig-push ${ipRange}${ipLocal} ${ipRange}${ipRemote}" > "/var/packages/VPNCenter/etc/openvpn/ccd/${username}"
+		echo "Modified user \"${username}\" to IP \"${ipLocal}\"."
 		((serviceRestart++))
+	else
+		echo "User \"${username}\" is OK."
 	fi
 done
 
 # Prevent config from being overwritten
-sed -i "s:overwriteccfiles=true:overwriteccfiles=false:g" /var/packages/VPNCenter/target/etc/openvpn/radiusplugin.cnf
+if sed -i "s:overwriteccfiles=true:overwriteccfiles=false:g" /var/packages/VPNCenter/target/etc/openvpn/radiusplugin.cnf; then
+	echo "Modified RADIUS config."
+else
+	echo "RADIUS config untouched."
+fi
 
 # Restart service if needed
 if [ $serviceRestart -gt 0 ]; then
 	synoservice --restart pkgctl-VPNCenter
+	echo "Restarted VPN service."
 fi
 
 exit 0
