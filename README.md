@@ -4,7 +4,7 @@ This script sets up static client IPs when using OpenVPN of `VPN Server` package
 
 #### 1. Notes
 
-- Pass the client list like this: "<username>:<ipsuffix>" (e. g. "john:202" will make sure that user "john" will be assigned IP "10.8.0.202")
+- Pass the client list like this: `"<username>:<ipsuffix>"` (e. g. "john:202" will make sure that user "john" will be assigned IP "10.8.0.202")
 - Please follow Synology/OpenVPN convention and only assign even numbers greater than: `2 + 4 * <max-clients>`
 - Use IP-suffixes great enough in order not to conflict with the build in dynamic assignment
 - The script is able to automatically update itself using `git`.
