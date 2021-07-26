@@ -125,7 +125,9 @@ sed -i "s:overwriteccfiles=true:overwriteccfiles=false:g" /var/packages/VPNCente
 
 # Restart service if needed
 if [ $serviceRestart -gt 0 ]; then
-	synoservice --restart pkgctl-VPNCenter
+	if ! synoservice --restart pkgctl-VPNCenter; then 
+		/var/packages/VPNCenter/target/scripts/openvpn.sh restart
+	fi
 	echo "Restarted VPN service."
 fi
 
