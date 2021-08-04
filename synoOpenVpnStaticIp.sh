@@ -122,13 +122,20 @@ else
 fi
 sed -i "s:overwriteccfiles=true:overwriteccfiles=false:g" /var/packages/VPNCenter/target/etc/openvpn/radiusplugin.cnf
 
-
 # Restart service if needed
 if [ $serviceRestart -gt 0 ]; then
-	if ! synoservice --restart pkgctl-VPNCenter; then 
-		/var/packages/VPNCenter/target/scripts/openvpn.sh restart
+	echo "Config modified. Restarting VPNCenter..."
+	if [ -x /usr/syno/sbin/synoservice  ]; then
+	    synoservice --restart pkgctl-VPNCenter
+	elif [ -x /bin/systemctl  ]; then
+	    systemctl restart pkgctl-VPNCenter.service
+	else
+		echo "Could not restart VPNCenter! Please reboot or try to restart manually via Package Center."
+		exit 1
 	fi
-	echo "Restarted VPN service."
+	echo "VPNCenter restarted."
 fi
 
 exit 0
+
+
